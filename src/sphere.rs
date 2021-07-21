@@ -13,7 +13,7 @@ pub struct SphereInstance {
     pub radius: f32,
     pub color: [f32; 4],
     pub heading: f32,
-    pub tail: tail_buffer::TailBuffer,
+    pub tail: tail_buffer::TailBuffer<SphereVertex>,
     sampler: sampler::Sampler,
     pub enabled: bool,
 }
@@ -47,7 +47,10 @@ impl SphereInstance {
 
     pub fn push_tail(&mut self) {
         if self.sampler.check() {
-            self.tail.push(self.dynamics.get_position());
+            let pos = self.dynamics.get_position();
+            self.tail.push(SphereVertex{
+                position: [pos.x, pos.y, pos.z]
+            });
         }
     }
 

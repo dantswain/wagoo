@@ -1,21 +1,19 @@
-use crate::sphere;
-
-pub struct TailBuffer {
+pub struct TailBuffer<T: Copy> {
     capacity: usize,
     write_pointer: usize,
     high_water_mark: usize,
     len: usize,
-    data: Vec<sphere::SphereVertex>,
+    data: Vec<T>,
 }
 
-impl TailBuffer {
+impl<T: Copy> TailBuffer<T> {
     pub fn new(capacity: usize) -> Self {
         Self {
             capacity,
             write_pointer: 0,
             high_water_mark: 0,
             len: 0,
-            data: Vec::<sphere::SphereVertex>::with_capacity(capacity),
+            data: Vec::<T>::with_capacity(capacity),
         }
     }
 
@@ -23,15 +21,11 @@ impl TailBuffer {
         self.len
     }
 
-    pub fn push(&mut self, position: cgmath::Vector3<f32>) {
-        let vertex = sphere::SphereVertex {
-            position: [position.x, position.y, position.z],
-        };
-
+    pub fn push(&mut self, el: T) {
         if self.high_water_mark == self.write_pointer {
-            self.data.push(vertex);
+            self.data.push(el);
         } else {
-            self.data[self.write_pointer] = vertex;
+            self.data[self.write_pointer] = el;
         }
 
         self.write_pointer = self.write_pointer + 1;
@@ -46,8 +40,8 @@ impl TailBuffer {
         self.high_water_mark = std::cmp::max(self.high_water_mark, self.write_pointer);
     }
 
-    pub fn to_vec(&self) -> Vec<sphere::SphereVertex> {
-        let mut out = Vec::<sphere::SphereVertex>::new();
+    pub fn to_vec(&self) -> Vec<T> {
+        let mut out = Vec::<T>::new();
 
         for ix in (0..self.write_pointer).rev() {
             out.push(self.data[ix]);
@@ -68,41 +62,24 @@ mod tests {
 
     #[test]
     fn write_works() {
-        let mut b = TailBuffer::new(3);
+        let mut b = TailBuffer::<u32>::new(3);
         assert_eq!(b.len(), 0);
-        let x = cgmath::Vector3 {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-        };
-        b.push(x);
+        b.push(0);
         assert_eq!(b.len(), 1);
         let v = b.to_vec();
         assert_eq!(v.len(), 1);
-        assert_eq!(v[0].position, [0.0, 0.0, 0.0]);
-        b.push(cgmath::Vector3 {
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-        });
+        assert_eq!(v[0], 0);
+        b.push(1);
         assert_eq!(b.len(), 2);
-        b.push(cgmath::Vector3 {
-            x: 2.0,
-            y: 2.0,
-            z: 2.0,
-        });
+        b.push(2);
         assert_eq!(b.len(), 3);
-        b.push(cgmath::Vector3 {
-            x: 3.0,
-            y: 3.0,
-            z: 3.0,
-        });
+        b.push(3);
         assert_eq!(b.len(), 3);
 
         let vv = b.to_vec();
         assert_eq!(vv.len(), 3);
-        assert_eq!(vv[2].position, [1.0, 1.0, 1.0]);
-        assert_eq!(vv[1].position, [2.0, 2.0, 2.0]);
-        assert_eq!(vv[0].position, [3.0, 3.0, 3.0]);
+        assert_eq!(vv[2], 1);
+        assert_eq!(vv[1], 2);
+        assert_eq!(vv[0], 3);
     }
 }
