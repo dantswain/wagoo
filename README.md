@@ -6,7 +6,7 @@ Here is an example screenshot with 1000 simulated Lorenz attractor trajectories:
 
 ![Lorenz Attractor](https://github.com/dantswain/wagoo/raw/main/screenshots/lorenz1.jpg)
 
-This is largely based on [Learn WGPU](https://sotrh.github.io/learn-wgpu/) as a starting point, specifically the [final tutorial source code](https://github.com/sotrh/learn-wgpu/tree/master/code/intermediate/tutorial13-threading/).
+My code is largely based on [Learn WGPU](https://sotrh.github.io/learn-wgpu/) as a starting point, specifically the [final tutorial source code](https://github.com/sotrh/learn-wgpu/tree/master/code/intermediate/tutorial13-threading/).
 
 Ostensibly my goal here is to genereate some desktop wallpaper images.  The code is not really optimized for FPS but rather flexibility/iterability and visual tweaks (if it could be said to be optimized at all).
 
